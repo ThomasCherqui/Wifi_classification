@@ -30,9 +30,6 @@ def main():
 
         test_dataset = raw_data[start:end] 
         train_dataset = np.concatenate([raw_data[:start], raw_data[end:]])
-    
-        print(test_dataset.shape)
-        print(train_dataset.shape)
 
         dt = DecisionTree()
         dt.train(train_dataset)
