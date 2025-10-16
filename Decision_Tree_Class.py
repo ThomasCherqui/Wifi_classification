@@ -145,29 +145,37 @@ class DecisionTree:
         # Show plot if this is the top call
         if ax is None:
             plt.show()
-    def pruning(self,X_val,y_val):
+            
+    def pruning(self, X_val, y_val):
 
-        if self.left : 
-            self.left.pruning(X_val,y_val)
-        if self.right :
-            self.right.pruning(X_val,y_val)
-        
-        if self.left.label is not None and self.right.label is not None :
-            y_pred_before = self.predict(X_val)
-            acc_before = np.sum(y_pred_before == y_val) / len(y_val)
+        if self.label is not None:
+            return self.label
+
+        if self.left_branch is not None:
+            self.left_branch.pruning(X_val, y_val)
+        if self.right_branch is not None:
+            self.right_branch.pruning(X_val, y_val)
+
+        if (self.left_branch is not None and self.right_branch is not None and
+            self.left_branch.label is not None and self.right_branch.label is not None):
+
+            y_pred_before = np.array([self.predict(x) for x in X_val])
+            acc_before = np.mean(y_pred_before == y_val)
+
+            y_majority = np.bincount(y_val.astype(int)).argmax()
             
-            y_majority = np.bincount(y_val).argmax()
-            
-            backup_left = self.left
-            backup_right = self.right
+            backup_left = self.left_branch
+            backup_right = self.right_branch
             backup_label = self.label
-            
+
+            self.left_branch = None
+            self.right_branch = None
             self.label = y_majority
-            
-            y_pred_after = self.predict(X_val)
-            acc_after = np.sum(y_pred_after == y_val) / len(y_val)
-            
-            if acc_after < acc_before :
-                self.left = backup_left
-                self.right = backup_right
-                self.label = backup_label   
+
+            y_pred_after = np.array([self.predict(x) for x in X_val])
+            acc_after = np.mean(y_pred_after == y_val)
+
+            if acc_after < acc_before:
+                self.left_branch = backup_left
+                self.right_branch = backup_right
+                self.label = backup_label

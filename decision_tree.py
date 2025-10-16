@@ -57,9 +57,13 @@ def main():
 
         # Save the decision tree for each fold
         dt.visualize_tree()
-        plt.savefig(f'decision_tree_fold_{i+1}.png')
+        plt.savefig(f'decision_tree_fold_sans_pruning.png')
         plt.show()
-
+        
+        dt.pruning(train_dataset[:,:-1], train_dataset[:,-1])
+        dt.visualize_tree()
+        plt.savefig(f'pruned_decision_tree_fold_avec_pruning.png')
+        
     average_results = averaging(all_results)
     print(average_results)
     
