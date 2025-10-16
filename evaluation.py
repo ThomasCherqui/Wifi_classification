@@ -180,3 +180,28 @@ def evaluate(test_db,trained_tree):
     
     return results
 
+def averaging(all_results):
+    """
+    Compute the average of evaluation metrics over multiple runs
+
+    Args:
+    all_results (list): list of dictionaries containing evaluation metrics
+
+    Returns:
+    dict : a dictionary containing averaged accuracy, recall, precision, f1 scores and confusion matrix
+    """
+    
+    # Compute the average of other metrics directly 
+    avg_acc = np.mean([res['accuracy'] for res in all_results])
+    avg_rec = np.mean([res['recall'] for res in all_results], axis=0).tolist()
+    avg_prec = np.mean([res['precision'] for res in all_results], axis=0).tolist()
+    avg_f1 = np.mean([res['f1_scores'] for res in all_results], axis=0).tolist()
+    
+    average_results = {
+        'accuracy': avg_acc,
+        'recall': avg_rec,
+        'precision': avg_prec,
+        'f1_scores': avg_f1
+    }
+    
+    return average_results
