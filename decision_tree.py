@@ -1,9 +1,11 @@
 import numpy as np
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
-from evaluation import evaluate
+from evaluation import evaluate, averaging
 
 
+
+    
 def split_dataset(x, y, test_proportion, random_generator=default_rng()):
 
     shuffled_indices = random_generator.permutation(len(x))
@@ -30,17 +32,29 @@ def main():
     clean_dataset = np.loadtxt('wifi_db/clean_dataset.txt')
     noisy_data = np.loadtxt('wifi_db/noisy_dataset.txt')
 
+    #choose the dataset to use
     raw_data = clean_dataset
+    np.random.shuffle(raw_data)
     
-    classes = np.unique(raw_data[:, -1])
-    x = raw_data[:, :-1]
-    y = raw_data[:, -1]
 
-    train_dataset, test_dataset = split_dataset(x, y, test_proportion=0.3, random_generator=rg)
+    k = 10
 
-    dt = DecisionTree()
-    dt.train(train_dataset)
-    tree_dict = dt.to_dict()
-    evaluate(test_dataset, dt)
+    num_samples = len(raw_data) // k
+    all_results = []
+    for i in range(0, k):
+        start = i*num_samples
+        end = start + num_samples
+
+        test_dataset = raw_data[start:end] 
+        train_dataset = np.concatenate([raw_data[:start], raw_data[end:]])
+
+        dt = DecisionTree()
+        dt.train(train_dataset)
+
+        results = evaluate(test_dataset, dt) 
+        all_results.append(results)
+        
+    average_results = averaging(all_results)
+    print(average_results)
     
 main()
