@@ -41,5 +41,5 @@ def main():
 
     dt = DecisionTree()
     dt.train(train_dataset)
-
+    tree_dict = dt.to_dict()
 main()
