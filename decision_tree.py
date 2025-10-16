@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
+from evaluation import evaluate
 
 
 
@@ -52,11 +53,10 @@ def main():
         dt = DecisionTree()
         dt.train(train_dataset)
 
-        # Test the predict function on the test dataset (remove the last column which is the label)
-        y_pred = np.array([dt.predict(row[:-1]) for row in test_dataset])
-        y_true = test_dataset[:, -1].astype(int)
+ 
 
-        evaluate(y_pred, y_true)
+        results = evaluate(test_dataset, dt) 
+        print(results)
 
     
 

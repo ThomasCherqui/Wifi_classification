@@ -161,7 +161,7 @@ def evaluate(test_db,trained_tree):
     x_test = test_db[:, :-1]
     y_true = test_db[:, -1]
     
-    y_pred = trained_tree.predict(x_test)
+    y_pred = np.array([trained_tree.predict(row) for row in x_test])
     
     C = confusion_matrix(y_true, y_pred)
     acc = accuracy_from_confusion_matrix(C)

@@ -89,6 +89,7 @@ class DecisionTree:
         if self.label is not None:
             return self.label
         if test[self.attribute] > self.value:
+            
             return self.right_branch.predict(test)
         else:
             return self.left_branch.predict(test)
