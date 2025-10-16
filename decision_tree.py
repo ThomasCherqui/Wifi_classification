@@ -1,8 +1,7 @@
 import numpy as np
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
-
-
+from evaluation import evaluate
 
 
 def split_dataset(x, y, test_proportion, random_generator=default_rng()):
@@ -42,4 +41,6 @@ def main():
     dt = DecisionTree()
     dt.train(train_dataset)
     tree_dict = dt.to_dict()
+    evaluate(test_dataset, dt)
+    
 main()
