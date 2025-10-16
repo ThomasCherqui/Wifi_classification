@@ -49,10 +49,27 @@ class DecisionTree:
                 # Check if class changes between two consecutive rows
                 if values[i,-1] != values[i+1,-1]:
                     # Check if value changes between two consecutive rows --> can't split if val doesn't change
-                  if values[i, 0] != values[i+1, 0]:
-                    class_change.append(i)
+                    if values[i, 0] != values[i+1, 0]:
+                        class_change.append(i)
 
-            # If we do not find anything in the list where the class and value changes, skip to next attribute
+            # If we do not find anything in the list where the class and value changes, need to flip the sorting array to descending order of classes
+            # this ensures we don't miss the case when our class is at the end of the list
+            if len(class_change) == 0:
+                values = np.array(data[:, [attribute,-1]]) 
+                values = values[values[:,1].argsort()[::-1]]
+                values = values[values[:,0].argsort(kind='stable')]
+                # Initialise list to keep track of all locations where we have a class change between values
+                class_change = []
+
+                # Loop over all samples
+                for i in range(len(values)-1): 
+                # Check if class changes between two consecutive rows
+                    if values[i,-1] != values[i+1,-1]:
+                        # Check if value changes between two consecutive rows --> can't split if val doesn't change
+                        if values[i, 0] != values[i+1, 0]:
+                            class_change.append(i)
+            
+            # If still zero set to infinity so it chooses another attribute
             if len(class_change) == 0:
                 best_attribute_matrix[attribute,:] = [attribute, np.inf, np.inf]
                 continue
@@ -97,10 +114,15 @@ class DecisionTree:
             self.attribute, self.value = self.find_split(dataset)
             self.attribute = int(self.attribute)
 
-            
+           
             #Split the dataset in two
             l_dataset = np.array([x for x in dataset if x[int(self.attribute)] <= self.value])
             r_dataset = np.array([x for x in dataset if x[int(self.attribute)] > self.value])
+
+              # If one of the datasets is empty, create a leaf node with the majority class --> ensures we do not infinitely recurr
+            if len(l_dataset) == 0 or len(r_dataset) == 0:
+                self.label = np.bincount(dataset[:, -1].astype(int)).argmax()
+                return self.label
 
             self.left_branch = DecisionTree(self.depth + 1)
             self.left_branch.train(l_dataset)

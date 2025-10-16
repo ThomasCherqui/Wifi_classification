@@ -16,8 +16,8 @@ def main():
     clean_dataset = np.loadtxt('wifi_db/clean_dataset.txt')
     noisy_data = np.loadtxt('wifi_db/noisy_dataset.txt')
 
-    #choose the dataset to use
-    raw_data = clean_dataset
+    #Choose the dataset to use
+    raw_data = noisy_data
     rng.shuffle(raw_data)
     
 
