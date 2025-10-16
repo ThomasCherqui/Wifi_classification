@@ -1,11 +1,10 @@
 import numpy as np
+import json
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
 from evaluation import evaluate, averaging
+import matplotlib.pyplot as plt 
 
-
-
-    
 def split_dataset(x, y, test_proportion, random_generator=default_rng()):
 
     shuffled_indices = random_generator.permutation(len(x))
@@ -50,11 +49,16 @@ def main():
 
         dt = DecisionTree()
         dt.train(train_dataset)
-
         results = evaluate(test_dataset, dt) 
         all_results.append(results)
-        
+
+        # Save the decision tree for each fold
+        dt.visualize_tree()
+        plt.savefig(f'decision_tree_fold_{i+1}.png')
+        plt.show()
+
     average_results = averaging(all_results)
     print(average_results)
     
 main()
+

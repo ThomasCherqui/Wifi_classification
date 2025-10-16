@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class DecisionTree:
 
@@ -89,7 +90,6 @@ class DecisionTree:
         if self.label is not None:
             return self.label
         if test[self.attribute] > self.value:
-            
             return self.right_branch.predict(test)
         else:
             return self.left_branch.predict(test)
@@ -105,3 +105,34 @@ class DecisionTree:
                 "left": self.left_branch.to_dict() if self.left_branch else None,
                 "right": self.right_branch.to_dict() if self.right_branch else None
             }
+    
+    def visualize_tree(self, x=1, y=0.5, dx=0.1, dy=0.1, ax=None):
+        import matplotlib.pyplot as plt
+
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(70, 40))
+            ax.axis('off')
+
+        # Determine if leaf node
+        if hasattr(self, 'label') and self.label is not None:
+            label = f"Room {self.label} ✓"
+            bbox_props = dict(boxstyle="circle,pad=0.4", fc="pink", ec="black", lw=1)
+        else:
+            label = f"X[{self.attribute}] ≤ {self.value:.2f}"
+            bbox_props = dict(boxstyle="round,pad=0.4", fc="orange", ec="black", lw=1)
+
+        ax.text(x, y, label, ha='center', va='center', bbox=bbox_props)
+
+        # Plot left child if exists
+        if hasattr(self, 'left_branch') and self.left_branch is not None:
+            ax.plot([x, x-dx], [y - 0.02, y - dy + 0.02], 'k-')
+            self.left_branch.visualize_tree(x - dx, y - dy, dx / 1.5, dy, ax)
+
+        # Plot right child if exists
+        if hasattr(self, 'right_branch') and self.right_branch is not None:
+            ax.plot([x, x + dx], [y - 0.02, y - dy + 0.02], 'k-')
+            self.right_branch.visualize_tree(x + dx, y - dy, dx / 1.5, dy, ax)
+
+        # Show plot if this is the top call
+        if ax is None:
+            plt.show()
