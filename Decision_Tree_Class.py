@@ -93,14 +93,14 @@ class DecisionTree:
         else:
             return self.left_branch.predict(test)
         
-    
-def to_dict(self):
-    # Convert the decision tree to a dictionary for easier visualization
-        if self.label is not None:
-            return {"label": int(self.label)}
-        return {
-            "attribute": int(self.attribute),
-            "value": float(self.value),
-            "left": self.left_branch.to_dict() if self.left_branch else None,
-            "right": self.right_branch.to_dict() if self.right_branch else None
-        }
+        
+    def to_dict(self):
+        # Convert the decision tree to a dictionary for easier visualization
+            if self.label is not None:
+                return {"label": int(self.label)}
+            return {
+                "attribute": int(self.attribute),
+                "value": float(self.value),
+                "left": self.left_branch.to_dict() if self.left_branch else None,
+                "right": self.right_branch.to_dict() if self.right_branch else None
+            }
