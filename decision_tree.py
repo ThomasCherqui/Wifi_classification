@@ -1,7 +1,8 @@
 import numpy as np
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
-import matplotlib.pyplot as plt
+
+
 
     
 def split_dataset(x, y, test_proportion, random_generator=default_rng()):
