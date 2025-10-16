@@ -27,7 +27,7 @@ class DecisionTree:
     def find_split(self, data):
         
         best_attribute_matrix = np.zeros((data.shape[1]-1,3))
-
+        #breakpoint()
         for attribute in range(data.shape[1]-1):
             values = np.array(data[:, [attribute,-1]]) #get only the attribute and class columns
             values = values[values[:,0].argsort()]
@@ -35,10 +35,14 @@ class DecisionTree:
 
             for i in range(len(values)-1): #check if class changes between two consecutive rows
                 if values[i,-1] != values[i+1,-1]:
+                  if values[i, 0] != values[i+1, 0]:
                     class_change.append(i)
 
-        # print(class_change)
+            if len(class_change) == 0:
+                best_attribute_matrix[attribute,:] = [attribute, np.inf, np.inf]
+                continue
 
+                
             remainder_array = np.zeros((len(class_change),2))
             for indices in class_change : #for each index where the class changes, calculate the entropy of the split
                 remainder = len(values[:indices+1,:])/len(values) * self.calculate_entropy(values[:indices+1,:]) + len(values[indices+1:,:])/len(values) * self.calculate_entropy(values[indices+1:,:])
@@ -50,12 +54,17 @@ class DecisionTree:
 
             threshold_value = (values[int(best_split_info[0]),0] + values[int(best_split_info[0]+1),0]) / 2
 
-        #  print("best split info is", best_split_info)
 
             best_attribute_matrix[attribute,:] = [attribute, best_split_info[1],threshold_value]
 
 
+
         best_attribute_index = np.argmin(best_attribute_matrix[:,1])
+        
+        # Edge case when no best attribute to split can be found
+        if best_attribute_matrix[best_attribute_index,2] == np.inf:
+            print("No good attribute to split on: take argmax of class label")
+            return None, None
 
         return best_attribute_matrix[best_attribute_index,[0,2]]
     
@@ -68,22 +77,23 @@ class DecisionTree:
 
         else:
             self.attribute, self.value = self.find_split(dataset)
+
+            #Take the argmax of the labels if we could not find a value to split on (one outlier in large pool of single class)
+            if self.attribute is None:
+                self.label = np.bincount(dataset[:, -1].astype(int)).argmax()  
+                return self.label
+            
             self.attribute = int(self.attribute)
 
+            
             #Split the dataset in two
-            l_dataset = np.array([x for x in dataset if x[int(self.attribute)] < self.value])
-            r_dataset = np.array([x for x in dataset if x[int(self.attribute)] >= self.value])
-
-            # If one of the datasets is empty, create a leaf node with the majority class
-            if len(l_dataset) == 0 or len(r_dataset) == 0:
-                self.label = np.bincount(dataset[:, -1].astype(int)).argmax()
-                return self.label
+            l_dataset = np.array([x for x in dataset if x[int(self.attribute)] <= self.value])
+            r_dataset = np.array([x for x in dataset if x[int(self.attribute)] > self.value])
 
             self.left_branch = DecisionTree(self.depth + 1)
             self.left_branch.train(l_dataset)
             self.right_branch = DecisionTree(self.depth + 1)
             self.right_branch.train(r_dataset)
-
 
 
     def predict(self,test):
@@ -93,7 +103,6 @@ class DecisionTree:
             return self.right_branch.predict(test)
         else:
             return self.left_branch.predict(test)
-        
         
     def to_dict(self):
         # Convert the decision tree to a dictionary for easier visualization
@@ -136,3 +145,29 @@ class DecisionTree:
         # Show plot if this is the top call
         if ax is None:
             plt.show()
+    def pruning(self,X_val,y_val):
+
+        if self.left : 
+            self.left.pruning(X_val,y_val)
+        if self.right :
+            self.right.pruning(X_val,y_val)
+        
+        if self.left.label is not None and self.right.label is not None :
+            y_pred_before = self.predict(X_val)
+            acc_before = np.sum(y_pred_before == y_val) / len(y_val)
+            
+            y_majority = np.bincount(y_val).argmax()
+            
+            backup_left = self.left
+            backup_right = self.right
+            backup_label = self.label
+            
+            self.label = y_majority
+            
+            y_pred_after = self.predict(X_val)
+            acc_after = np.sum(y_pred_after == y_val) / len(y_val)
+            
+            if acc_after < acc_before :
+                self.left = backup_left
+                self.right = backup_right
+                self.label = backup_label   
