@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class DecisionTree:
 
@@ -107,16 +108,13 @@ class DecisionTree:
             self.right_branch.train(r_dataset)
 
 
-
     def predict(self,test):
         if self.label is not None:
             return self.label
         if test[self.attribute] > self.value:
-            
             return self.right_branch.predict(test)
         else:
             return self.left_branch.predict(test)
-        
         
     def to_dict(self):
         # Convert the decision tree to a dictionary for easier visualization
@@ -128,3 +126,68 @@ class DecisionTree:
                 "left": self.left_branch.to_dict() if self.left_branch else None,
                 "right": self.right_branch.to_dict() if self.right_branch else None
             }
+    
+    def visualize_tree(self, x=1, y=0.5, dx=0.1, dy=0.1, ax=None):
+        import matplotlib.pyplot as plt
+
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(70, 40))
+            ax.axis('off')
+
+        # Determine if leaf node
+        if hasattr(self, 'label') and self.label is not None:
+            label = f"Room {self.label} ✓"
+            bbox_props = dict(boxstyle="circle,pad=0.4", fc="pink", ec="black", lw=1)
+        else:
+            label = f"X[{self.attribute}] ≤ {self.value:.2f}"
+            bbox_props = dict(boxstyle="round,pad=0.4", fc="orange", ec="black", lw=1)
+
+        ax.text(x, y, label, ha='center', va='center', bbox=bbox_props)
+
+        # Plot left child if exists
+        if hasattr(self, 'left_branch') and self.left_branch is not None:
+            ax.plot([x, x-dx], [y - 0.02, y - dy + 0.02], 'k-')
+            self.left_branch.visualize_tree(x - dx, y - dy, dx / 1.5, dy, ax)
+
+        # Plot right child if exists
+        if hasattr(self, 'right_branch') and self.right_branch is not None:
+            ax.plot([x, x + dx], [y - 0.02, y - dy + 0.02], 'k-')
+            self.right_branch.visualize_tree(x + dx, y - dy, dx / 1.5, dy, ax)
+
+        # Show plot if this is the top call
+        if ax is None:
+            plt.show()
+            
+    def pruning(self, X_val, y_val):
+
+        if self.label is not None:
+            return self.label
+
+        if self.left_branch is not None:
+            self.left_branch.pruning(X_val, y_val)
+        if self.right_branch is not None:
+            self.right_branch.pruning(X_val, y_val)
+
+        if (self.left_branch is not None and self.right_branch is not None and
+            self.left_branch.label is not None and self.right_branch.label is not None):
+
+            y_pred_before = np.array([self.predict(x) for x in X_val])
+            acc_before = np.mean(y_pred_before == y_val)
+
+            y_majority = np.bincount(y_val.astype(int)).argmax()
+            
+            backup_left = self.left_branch
+            backup_right = self.right_branch
+            backup_label = self.label
+
+            self.left_branch = None
+            self.right_branch = None
+            self.label = y_majority
+
+            y_pred_after = np.array([self.predict(x) for x in X_val])
+            acc_after = np.mean(y_pred_after == y_val)
+
+            if acc_after < acc_before:
+                self.left_branch = backup_left
+                self.right_branch = backup_right
+                self.label = backup_label
