@@ -1,10 +1,9 @@
 import numpy as np
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
+import matplotlib.pyplot as plt
 
-
-
-
+    
 def split_dataset(x, y, test_proportion, random_generator=default_rng()):
 
     shuffled_indices = random_generator.permutation(len(x))
@@ -32,14 +31,34 @@ def main():
     noisy_data = np.loadtxt('wifi_db/noisy_dataset.txt')
 
     raw_data = clean_dataset
+    np.random.shuffle(raw_data)
     
-    classes = np.unique(raw_data[:, -1])
-    x = raw_data[:, :-1]
-    y = raw_data[:, -1]
 
-    train_dataset, test_dataset = split_dataset(x, y, test_proportion=0.3, random_generator=rg)
+    k = 10
 
-    dt = DecisionTree()
-    dt.train(train_dataset)
+    num_samples = len(raw_data) // k
+
+    for i in range(0, k):
+        start = i*num_samples
+        end = start + num_samples
+
+        test_dataset = raw_data[start:end] 
+        train_dataset = np.concatenate([raw_data[:start], raw_data[end:]])
+    
+        print(test_dataset.shape)
+        print(train_dataset.shape)
+
+        dt = DecisionTree()
+        dt.train(train_dataset)
+
+        # Test the predict function on the test dataset (remove the last column which is the label)
+        y_pred = np.array([dt.predict(row[:-1]) for row in test_dataset])
+        y_true = test_dataset[:, -1].astype(int)
+
+        evaluate(y_pred, y_true)
+
+    
+
+
 
 main()
