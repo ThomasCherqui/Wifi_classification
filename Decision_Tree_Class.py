@@ -84,16 +84,13 @@ class DecisionTree:
             self.right_branch.train(r_dataset)
 
 
-
     def predict(self,test):
         if self.label is not None:
             return self.label
         if test[self.attribute] > self.value:
-            
             return self.right_branch.predict(test)
         else:
             return self.left_branch.predict(test)
-        
         
     def to_dict(self):
         # Convert the decision tree to a dictionary for easier visualization
@@ -105,3 +102,30 @@ class DecisionTree:
                 "left": self.left_branch.to_dict() if self.left_branch else None,
                 "right": self.right_branch.to_dict() if self.right_branch else None
             }
+    
+    def pruning(self,X_val,y_val):
+
+        if self.left : 
+            self.left.pruning(X_val,y_val)
+        if self.right :
+            self.right.pruning(X_val,y_val)
+        
+        if self.left.label is not None and self.right.label is not None :
+            y_pred_before = self.predict(X_val)
+            acc_before = np.sum(y_pred_before == y_val) / len(y_val)
+            
+            y_majority = np.bincount(y_val).argmax()
+            
+            backup_left = self.left
+            backup_right = self.right
+            backup_label = self.label
+            
+            self.label = y_majority
+            
+            y_pred_after = self.predict(X_val)
+            acc_after = np.sum(y_pred_after == y_val) / len(y_val)
+            
+            if acc_after < acc_before :
+                self.left = backup_left
+                self.right = backup_right
+                self.label = backup_label   
