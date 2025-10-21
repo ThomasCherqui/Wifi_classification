@@ -130,7 +130,7 @@ def f1_scores(precisions, recalls):
     
     return f1s
 
-def visualize_confusion_matrix(C, class_names):
+def visualize_confusion_matrix(C, class_names, img_path):
     """
     Visualize the confusion matrix using matplotlib
 
@@ -145,8 +145,6 @@ def visualize_confusion_matrix(C, class_names):
 
     for j in range(len(class_names)):
         for i in range(len(class_names)):
-            print(C)
-            print(C[j, i])
             plt.annotate(str(C[j, i]), xy=(j, i), ha='center', va='center', color='white' if i==j else 'black')
 
 
@@ -154,9 +152,9 @@ def visualize_confusion_matrix(C, class_names):
     plt.yticks(np.arange(len(class_names)), [str(int(x)) for x in class_names])
     plt.title('Confusion Matrix')
     plt.imshow(C, cmap='Blues', interpolation='nearest')
-    plt.savefig('confusion_matrix.png')
+    plt.savefig(img_path)
     
-def evaluate(test_db,trained_tree):
+def evaluate(test_db,trained_tree, img_path):
     """
     Evaluate the performance of a trained decision tree on a test dataset
 
@@ -178,7 +176,7 @@ def evaluate(test_db,trained_tree):
     rec = recall(C)
     prec = precision_rates(C)
     f1 = f1_scores(prec, rec)
-    visualize_confusion_matrix(C, class_names=np.unique(y_true).tolist())
+    visualize_confusion_matrix(C, np.unique(y_true).tolist(), img_path)
     
     results = {
         'confusion_matrix': C,
@@ -208,10 +206,10 @@ def averaging(all_results):
     avg_f1 = np.mean([res['f1_scores'] for res in all_results], axis=0).tolist()
     
     average_results = {
-        'accuracy': avg_acc,
-        'recall': avg_rec,
-        'precision': avg_prec,
-        'f1_scores': avg_f1
+        'accuracy': float(avg_acc),
+        'recall': [round(x, 3) for x in avg_rec],
+        'precision': [round(x, 3) for x in avg_prec],
+        'f1_scores': [round(x, 3) for x in avg_f1]
     }
     
     return average_results

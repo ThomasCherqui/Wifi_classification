@@ -186,30 +186,30 @@ class DecisionTree:
             return self.label
 
         if self.left_branch is not None:
-            self.left_branch.pruning(X_val, y_val)
+            l_dataset_X = X_val[X_val[:, int(self.attribute)] <= self.value]
+            l_dataset_y = y_val[X_val[:, int(self.attribute)] <= self.value]
+            self.left_branch.pruning(l_dataset_X, l_dataset_y)
+        
         if self.right_branch is not None:
-            self.right_branch.pruning(X_val, y_val)
+            r_dataset_X = X_val[X_val[:, int(self.attribute)] > self.value]
+            r_dataset_y = y_val[X_val[:, int(self.attribute)] > self.value]
+            self.right_branch.pruning(r_dataset_X, r_dataset_y)
 
         if (self.left_branch is not None and self.right_branch is not None and
-            self.left_branch.label is not None and self.right_branch.label is not None):
+             self.left_branch.label is not None and self.right_branch.label is not None):
 
             y_pred_before = np.array([self.predict(x) for x in X_val])
             acc_before = np.mean(y_pred_before == y_val)
 
             y_majority = np.bincount(y_val.astype(int)).argmax()
+            new_labels = np.repeat(y_majority, len(y_val))
+            acc_after = np.mean(new_labels == y_val)
             
-            backup_left = self.left_branch
-            backup_right = self.right_branch
-            backup_label = self.label
+            print(f"Samples: {len(y_val)}, Acc before: {acc_before:.3f}, Acc after: {acc_after:.3f}")
 
-            self.left_branch = None
-            self.right_branch = None
-            self.label = y_majority
-
-            y_pred_after = np.array([self.predict(x) for x in X_val])
-            acc_after = np.mean(y_pred_after == y_val)
-
-            if acc_after < acc_before:
-                self.left_branch = backup_left
-                self.right_branch = backup_right
-                self.label = backup_label
+            if acc_after >= acc_before:
+                breakpoint()
+                self.left_branch = None
+                self.right_branch = None
+                self.label = y_majority
+                #breakpoint()

@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    print("Decision Tree Coursework Part 1: Trees without Pruning \n")
+    print("Decision Tree Coursework \n")
     
     seed = 60013
     rng = default_rng(seed)
     k = 10 #number of folds is 10
 
 
-    print("Building Tree using Clean Dataset:")
+    print("Building Tree using Clean Dataset WITH PRUNING:")
 
     #Load the data
     clean_dataset = np.loadtxt('wifi_db/clean_dataset.txt')
@@ -37,9 +37,10 @@ def main():
         #Train decision tree
         dt = DecisionTree()
         dt.train(train_dataset)
+        dt.pruning(train_dataset[:,:-1], train_dataset[:,-1])
 
         #Produce predictions for test dataset and evaluate
-        results = evaluate(test_dataset, dt, 'visualisations/confusion_matrix_clean.png')  
+        results = evaluate(test_dataset, dt, 'visualisations/confusion_matrix_clean_w_pruning.png')  
 
         #Append results for each fold
         all_results.append(results)
@@ -50,14 +51,8 @@ def main():
     print(average_results)
 
 
-    # Save the decision tree for a given fold
-    #dt.visualize_tree()
-    #plt.savefig(f'visualisations/decision_tree_fold_k_without_pruning.png')
-    #plt.show()
-    
-
     print("\n")
-    print("Building Tree using Noisy Dataset:")
+    print("Building Tree using Noisy Dataset WITH PRUNING:")
 
     noisy_data = np.loadtxt('wifi_db/noisy_dataset.txt')
 
@@ -75,19 +70,14 @@ def main():
 
         dt = DecisionTree()
         dt.train(train_dataset)
-        results = evaluate(test_dataset, dt, 'visualisations/confusion_matrix_noisy.png') 
+        dt.pruning(train_dataset[:,:-1], train_dataset[:,-1])
+        results = evaluate(test_dataset, dt, 'visualisations/confusion_matrix_noisy_w_pruning.png') 
         all_results.append(results)
         
 
 
     average_results = averaging(all_results)
     print(average_results)
-
-    #Save the decision tree for a given fold
-    #dt.visualize_tree()
-    #plt.savefig(f'visualisations/decision_tree_fold_k_without_pruning.png')
-    #plt.show()
-    
         
 main()
 
