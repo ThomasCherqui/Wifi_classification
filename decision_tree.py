@@ -25,7 +25,7 @@ def main():
 
     num_samples = len(raw_data) // k
     all_results = []
-    for i in range(0, k):
+    for i in range(0, 1):
         start = i*num_samples
         end = start + num_samples
 
@@ -40,14 +40,16 @@ def main():
         # Save the decision tree for each fold
         dt.visualize_tree()
         plt.savefig(f'decision_tree_fold_sans_pruning.png')
-        plt.show()
+        #plt.show()
         
         dt.pruning(train_dataset[:,:-1], train_dataset[:,-1])
         dt.visualize_tree()
-        plt.savefig(f'pruned_decision_tree_fold_avec_pruning.png')
+        #plt.savefig(f'pruned_decision_tree_fold_avec_pruning.png')
+        results = evaluate(test_dataset, dt) 
+
+            
+        average_results = averaging(all_results)
+        print(average_results)
         
-    average_results = averaging(all_results)
-    print(average_results)
-    
 main()
 

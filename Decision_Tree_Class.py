@@ -119,7 +119,7 @@ class DecisionTree:
             l_dataset = np.array([x for x in dataset if x[int(self.attribute)] <= self.value])
             r_dataset = np.array([x for x in dataset if x[int(self.attribute)] > self.value])
 
-              # If one of the datasets is empty, create a leaf node with the majority class --> ensures we do not infinitely recurr
+            # If one of the datasets is empty, create a leaf node with the majority class --> ensures we do not infinitely recurr
             if len(l_dataset) == 0 or len(r_dataset) == 0:
                 self.label = np.bincount(dataset[:, -1].astype(int)).argmax()
                 return self.label

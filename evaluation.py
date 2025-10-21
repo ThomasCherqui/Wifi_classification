@@ -5,14 +5,12 @@ def confusion_matrix(y_true, y_pred):
     """
     Compute the confusion matrix to evaluate the accuracy of a classification.
 
-    Parameters
-    ----------
+    Args:
     y_true (np.ndarray): true labels of the data (groundtruth)
     y_pred (np.ndarray): predicted labels
 
-    Returns
-    -------
-    C (np.ndarray)
+    Returns:
+    C (np.ndarray): the confusion matrix
     """
 
     #Initialize the confusion matrix
@@ -141,9 +139,21 @@ def visualize_confusion_matrix(C, class_names):
     class_names (list): list of class names
     """
     plt.figure(figsize=(8, 6))
+    
     plt.xlabel('Predicted Label')
     plt.ylabel('True Label')
+
+    for j in range(len(class_names)):
+        for i in range(len(class_names)):
+            print(C)
+            print(C[j, i])
+            plt.annotate(str(C[j, i]), xy=(j, i), ha='center', va='center', color='white' if i==j else 'black')
+
+
+    plt.xticks(np.arange(len(class_names)), [str(int(x)) for x in class_names])
+    plt.yticks(np.arange(len(class_names)), [str(int(x)) for x in class_names])
     plt.title('Confusion Matrix')
+    plt.imshow(C, cmap='Blues', interpolation='nearest')
     plt.savefig('confusion_matrix.png')
     
 def evaluate(test_db,trained_tree):
