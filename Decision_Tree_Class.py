@@ -8,7 +8,7 @@ class DecisionTree:
         self.right_branch = None
         self.attribute = None
         self.value = None
-        self.depth = 0
+        self.depth = depth
         self.label = None
 
 
