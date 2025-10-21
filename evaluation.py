@@ -168,7 +168,7 @@ def evaluate(test_db,trained_tree):
     rec = recall(C)
     prec = precision_rates(C)
     f1 = f1_scores(prec, rec)
-    visualize_confusion_matrix(C, class_names=np.unique(y_true).tolist())
+    #visualize_confusion_matrix(C, class_names=np.unique(y_true).tolist())
     
     results = {
         'confusion_matrix': C,
