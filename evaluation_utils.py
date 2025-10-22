@@ -210,7 +210,7 @@ def averaging(all_results, img_path):
     all_results (list): list of dictionaries containing evaluation metrics
 
     Returns:
-    dict : a dictionary containing averaged accuracy, recall, precision, f1 scores and confusion matrix
+    dict : a dictionary containing averaged accuracy, recall, precision, f1 scores. The confusion matrix is visualized and saved to img_path
     """
 
     # Compute the average of other metrics directly

@@ -43,13 +43,14 @@ def main(n_folds=10):
 
         # Evaluate the tree using the test data
         results = evaluate(test_dataset, dt)
-
         all_results.append(results)
 
-    # Save the decision tree for each fold
-    # plt.savefig(f'decision_tree_fold_avec_pruning.png')
-    # dt.visualize_tree3()
-    # plt.show()
+    # Ask user for visualization option
+    visualise = (
+        input("Do you want to visualise the decision tree? (yes/no): ").strip().lower()
+    )
+    if visualise == "yes":
+        dt.visualize_tree3(f"decision_tree_{dataset}_data.png")
 
     average_results = averaging(all_results, outfile)
     print(average_results)

@@ -26,7 +26,7 @@ def main(n_folds=10):
     all_results = []
 
     for train_indices, test_indices in train_test_k_fold(n_folds, len(raw_data), rng):
-
+        # Set up the dataset for given fold
         train_dataset = raw_data[train_indices, :]
         test_dataset = raw_data[test_indices, :]
 
@@ -39,9 +39,12 @@ def main(n_folds=10):
         results = evaluate(test_dataset, dt)
         all_results.append(results)
 
-    # dt.visualize_tree3()
-    # plt.savefig(f'decision_tree_fold_sans_pruning.png')
-    # plt.show()
+    # Ask user for visualization option
+    visualise = (
+        input("Do you want to visualise the decision tree? (yes/no): ").strip().lower()
+    )
+    if visualise == "yes":
+        dt.visualize_tree3(f"decision_tree_{dataset}_data.png")
 
     average_results = averaging(all_results, outfile)
     print(average_results)
