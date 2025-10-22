@@ -1,30 +1,11 @@
 import numpy as np
 import json
+import matplotlib.pyplot as plt 
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
 from evaluation import evaluate, averaging
-import matplotlib.pyplot as plt 
+from cross_validation_utils import train_test_k_fold
 
-def k_fold_split(n_splits, n_instances, random_generator):
-
-    shuffled_indices = random_generator.permutation(n_instances)
-    split_indices = np.array_split(shuffled_indices, n_splits)
-
-    return split_indices
-
-def train_test_k_fold(n_folds, n_instances, random_generator):
-    
-    split_indices = k_fold_split(n_folds, n_instances, random_generator)
-
-    folds = []
-
-    for k in range(n_folds):
-
-        test_indices = split_indices[k]
-        train_indices = np.concatenate([split_indices[i] for i in range(n_folds) if i!=k])
-        folds.append([train_indices, test_indices])
-
-    return folds
 
 def main(n_folds = 10):
     print("Decision Tree Coursework")
