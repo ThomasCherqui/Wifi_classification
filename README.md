@@ -12,9 +12,10 @@
 
 ## Choose the dataset
 Inside each main file, you will find the following lines:
-    ## Choose the dataset to use
-    # raw_data, outfile = clean_dataset, clean_confusion_matrix_filepath
-    raw_data, outfile = noisy_data, noisy_confusion_matrix_filepath
+
+   *##Choose the dataset to use*
+    *# raw_data, outfile = clean_dataset, clean_confusion_matrix_filepath*
+    *raw_data, outfile = noisy_data, noisy_confusion_matrix_filepath*
 
 Uncomment the dataset you want to use and comment the other.
 
