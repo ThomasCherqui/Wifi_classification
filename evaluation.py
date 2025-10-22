@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def confusion_matrix(y_true, y_pred):
     """
     Compute the confusion matrix to evaluate the accuracy of a classification.
@@ -13,16 +14,17 @@ def confusion_matrix(y_true, y_pred):
     C (np.ndarray): the confusion matrix
     """
 
-    #Initialize the confusion matrix
+    # Initialize the confusion matrix
     classes = np.unique(y_true)
     n_classes = classes.shape[0]
     C = np.zeros((n_classes, n_classes), dtype=int)
-    #Fill the confusion matrix
+    # Fill the confusion matrix
     for i in range(n_classes):
         for j in range(n_classes):
             C[i, j] = np.sum((y_true == classes[i]) & (y_pred == classes[j]))
-            
+
     return C
+
 
 def accuracy(y_true, y_pred):
     """
@@ -35,7 +37,7 @@ def accuracy(y_true, y_pred):
     Returns:
     float : the accuracy
     """
-    
+
     try:
         return np.sum(y_true == y_pred) / len(y_true)
     except ZeroDivisionError:
@@ -56,79 +58,83 @@ def accuracy_from_confusion_matrix(C):
         total_population = np.sum(C)
         total_good_pred = 0
         for i in range(C.shape[0]):
-            total_good_pred += C[i,i]
-        return (total_good_pred/total_population)
+            total_good_pred += C[i, i]
+        return total_good_pred / total_population
     except ZeroDivisionError:
         return 0
-    
+
+
 def recall(C):
     """
     Compute the recall for each class (TP/(TP+FN)) given the confusion matrix
-    
+
     Args:
     C (np.ndarray): the confusion matrix
-    
+
     Returns : list of recall for each class
     """
     recalls = []
     n_classes = C.shape[0]
-    
+
     for i in range(n_classes):
         TP = C[i, i]
-        #Sum on row i to get all actual class i
+        # Sum on row i to get all actual class i
         FN = np.sum(C[i, :]) - TP
         try:
             recalls.append(TP / (TP + FN))
         except ZeroDivisionError:
             recalls.append(0)
-    
+
     return recalls
+
 
 def precision_rates(C):
     """
     Compute tHe precision rate for each class (TP/(TP+FP)) given the confusion matrix
-    
+
     Args:
     C (np.ndarray): the confusion matrix
-    
+
     Returns : list of precision rate for each class
     """
-    
+
     precisions = []
     n_classes = C.shape[0]
-    
+
     for i in range(n_classes):
         TP = C[i, i]
-        #Sum on column i to get all predicted as class i
+        # Sum on column i to get all predicted as class i
         FP = np.sum(C[:, i]) - TP
         try:
             precisions.append(TP / (TP + FP))
         except ZeroDivisionError:
             precisions.append(0)
-    
+
     return precisions
+
 
 def f1_scores(precisions, recalls):
     """
     Compute the f1 score for each class given the precision and recall rates
-    
+
     Args:
     precisions (list): list of precision rates for each class
     recalls (list): list of recall rates for each class
-    
+
     Returns : list of f1 scores for each class
     """
-    
+
     f1s = []
     n_classes = len(precisions)
-    
+
     for i in range(n_classes):
         try:
             f1s.append(2 * (precisions[i] * recalls[i]) / (precisions[i] + recalls[i]))
         except ZeroDivisionError:
             f1s.append(0)
-    
+
     return f1s
+
 
 def visualize_confusion_matrix(C, class_names, img_path):
     """
@@ -139,22 +145,28 @@ def visualize_confusion_matrix(C, class_names, img_path):
     class_names (list): list of class names
     """
     plt.figure(figsize=(8, 6))
-    
-    plt.xlabel('Predicted Label')
-    plt.ylabel('True Label')
+
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
 
     for j in range(len(class_names)):
         for i in range(len(class_names)):
-            plt.annotate(str(C[j, i]), xy=(j, i), ha='center', va='center', color='white' if i==j else 'black')
-
+            plt.annotate(
+                str(C[j, i]),
+                xy=(j, i),
+                ha="center",
+                va="center",
+                color="white" if i == j else "black",
+            )
 
     plt.xticks(np.arange(len(class_names)), [str(int(x)) for x in class_names])
     plt.yticks(np.arange(len(class_names)), [str(int(x)) for x in class_names])
-    plt.title('Confusion Matrix')
-    plt.imshow(C, cmap='Blues', interpolation='nearest')
+    plt.title("Confusion Matrix")
+    plt.imshow(C, cmap="Blues", interpolation="nearest")
     plt.savefig(img_path)
-    
-def evaluate(test_db,trained_tree):
+
+
+def evaluate(test_db, trained_tree):
     """
     Evaluate the performance of a trained decision tree on a test dataset
 
@@ -165,27 +177,28 @@ def evaluate(test_db,trained_tree):
     Returns:
     dict : a dictionary containing accuracy, recall, precision, f1 scores and confusion matrix
     """
-    
+
     x_test = test_db[:, :-1]
     y_true = test_db[:, -1]
-    
+
     y_pred = np.array([trained_tree.predict(row) for row in x_test])
-    
+
     C = confusion_matrix(y_true, y_pred)
     acc = accuracy_from_confusion_matrix(C)
     rec = recall(C)
     prec = precision_rates(C)
     f1 = f1_scores(prec, rec)
-    
+
     results = {
-        'confusion_matrix': C,
-        'accuracy': acc,
-        'recall': rec,
-        'precision': prec,
-        'f1_scores': f1
+        "confusion_matrix": C,
+        "accuracy": acc,
+        "recall": rec,
+        "precision": prec,
+        "f1_scores": f1,
     }
-    
+
     return results
+
 
 def averaging(all_results, img_path):
     """
@@ -197,20 +210,20 @@ def averaging(all_results, img_path):
     Returns:
     dict : a dictionary containing averaged accuracy, recall, precision, f1 scores and confusion matrix
     """
-    
-    # Compute the average of other metrics directly 
-    avg_acc = np.mean([res['accuracy'] for res in all_results])
-    avg_rec = np.mean([res['recall'] for res in all_results], axis=0).tolist()
-    avg_prec = np.mean([res['precision'] for res in all_results], axis=0).tolist()
-    avg_f1 = np.mean([res['f1_scores'] for res in all_results], axis=0).tolist()
-    avg_confusion = np.mean([res['confusion_matrix'] for res in all_results], axis=0)
+
+    # Compute the average of other metrics directly
+    avg_acc = np.mean([res["accuracy"] for res in all_results])
+    avg_rec = np.mean([res["recall"] for res in all_results], axis=0).tolist()
+    avg_prec = np.mean([res["precision"] for res in all_results], axis=0).tolist()
+    avg_f1 = np.mean([res["f1_scores"] for res in all_results], axis=0).tolist()
+    avg_confusion = np.mean([res["confusion_matrix"] for res in all_results], axis=0)
     visualize_confusion_matrix(avg_confusion, [1, 2, 3, 4], img_path)
 
     average_results = {
-        'accuracy': float(avg_acc),
-        'recall': [round(x, 3) for x in avg_rec],
-        'precision': [round(x, 3) for x in avg_prec],
-        'f1_scores': [round(x, 3) for x in avg_f1]
+        "accuracy": float(avg_acc),
+        "recall": [round(x, 3) for x in avg_rec],
+        "precision": [round(x, 3) for x in avg_prec],
+        "f1_scores": [round(x, 3) for x in avg_f1],
     }
-    
+
     return average_results
