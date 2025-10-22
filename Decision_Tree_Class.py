@@ -385,28 +385,28 @@ class DecisionTree:
         if self.left_branch is not None:
             l_dataset_X = X_val[X_val[:, int(self.attribute)] <= self.value]
             l_dataset_y = y_val[X_val[:, int(self.attribute)] <= self.value]
-            self.left_branch.pruning(l_dataset_X, l_dataset_y)
+
+            if len(l_dataset_y) != 0:
+                self.left_branch.pruning(l_dataset_X, l_dataset_y)
         
         if self.right_branch is not None:
             r_dataset_X = X_val[X_val[:, int(self.attribute)] > self.value]
             r_dataset_y = y_val[X_val[:, int(self.attribute)] > self.value]
-            self.right_branch.pruning(r_dataset_X, r_dataset_y)
 
-        if (self.left_branch is not None and self.right_branch is not None and
-             self.left_branch.label is not None and self.right_branch.label is not None):
+            if len(r_dataset_y) != 0:
+                self.right_branch.pruning(r_dataset_X, r_dataset_y)
 
-            y_pred_before = np.array([self.predict(x) for x in X_val])
-            acc_before = np.mean(y_pred_before == y_val)
+        
+        y_pred_before = np.array([self.predict(x) for x in X_val])
+        acc_before = np.mean(y_pred_before == y_val)
 
-            y_majority = np.bincount(y_val.astype(int)).argmax()
-            new_labels = np.repeat(y_majority, len(y_val))
-            acc_after = np.mean(new_labels == y_val)
-            
-            print(f"Samples: {len(y_val)}, Acc before: {acc_before:.3f}, Acc after: {acc_after:.3f}")
+        y_majority = np.bincount(y_val.astype(int)).argmax()
+        new_labels = np.repeat(y_majority, len(y_val))
+        acc_after = np.mean(new_labels == y_val)
+        
 
-            if acc_after >= acc_before:
-                breakpoint()
-                self.left_branch = None
-                self.right_branch = None
-                self.label = y_majority
-                #breakpoint()
+        if acc_after >= acc_before:
+            self.left_branch = None
+            self.right_branch = None
+            self.label = y_majority
+            #breakpoint()

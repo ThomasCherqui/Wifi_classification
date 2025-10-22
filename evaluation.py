@@ -154,7 +154,7 @@ def visualize_confusion_matrix(C, class_names, img_path):
     plt.imshow(C, cmap='Blues', interpolation='nearest')
     plt.savefig(img_path)
     
-def evaluate(test_db,trained_tree, img_path):
+def evaluate(test_db,trained_tree):
     """
     Evaluate the performance of a trained decision tree on a test dataset
 
@@ -176,7 +176,6 @@ def evaluate(test_db,trained_tree, img_path):
     rec = recall(C)
     prec = precision_rates(C)
     f1 = f1_scores(prec, rec)
-    visualize_confusion_matrix(C, class_names=np.unique(y_true).tolist())
     
     results = {
         'confusion_matrix': C,
@@ -188,7 +187,7 @@ def evaluate(test_db,trained_tree, img_path):
     
     return results
 
-def averaging(all_results):
+def averaging(all_results, img_path):
     """
     Compute the average of evaluation metrics over multiple runs
 
@@ -204,7 +203,9 @@ def averaging(all_results):
     avg_rec = np.mean([res['recall'] for res in all_results], axis=0).tolist()
     avg_prec = np.mean([res['precision'] for res in all_results], axis=0).tolist()
     avg_f1 = np.mean([res['f1_scores'] for res in all_results], axis=0).tolist()
-    
+    avg_confusion = np.mean([res['confusion_matrix'] for res in all_results], axis=0)
+    visualize_confusion_matrix(avg_confusion, [1, 2, 3, 4], img_path)
+
     average_results = {
         'accuracy': float(avg_acc),
         'recall': [round(x, 3) for x in avg_rec],
