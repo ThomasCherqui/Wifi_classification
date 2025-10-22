@@ -11,13 +11,7 @@
 
 
 ## Choose the dataset
-Inside each main file, you will find the following lines:
-
-   *##Choose the dataset to use*
-    *# raw_data, outfile = clean_dataset, clean_confusion_matrix_filepath*
-    *raw_data, outfile = noisy_data, noisy_confusion_matrix_filepath*
-
-Uncomment the dataset you want to use and comment the other.
+The user chooses the dataset ('clean' or 'noisy') as an input when the main is executed.
 
 ## Run with or without pruning
 Run *python main_without_pruning.py* or *python main_with_pruning.py*

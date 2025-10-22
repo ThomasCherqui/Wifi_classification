@@ -13,16 +13,16 @@ def main(n_folds=10):
     seed = 60013
     rng = default_rng(seed)
 
-    # Load the data
-    clean_dataset = np.loadtxt("wifi_db/clean_dataset.txt")
-    clean_confusion_matrix_filepath = "visualisations/confusion_matrix_clean.png"
-    noisy_data = np.loadtxt("wifi_db/noisy_dataset.txt")
-    noisy_confusion_matrix_filepath = "visualisations/confusion_matrix_noisy.png"
+    # The user chooses the dataset
+    dataset = input("Choose dataset ('clean' or 'noisy'): ").strip().lower()
 
-    ##Choose the dataset to use
-    # raw_data, outfile = clean_dataset, clean_confusion_matrix_filepath
-    raw_data, outfile = noisy_data, noisy_confusion_matrix_filepath
+    if dataset not in {"clean", "noisy"}:
+        raise ValueError("Invalid dataset. Choose 'clean' or 'noisy'.")
 
+    raw_data = np.loadtxt(f"wifi_db/{dataset}_dataset.txt")
+    outfile = f"visualisations/confusion_matrix_{dataset}.png"
+
+    # Initialize list to store evaluation metrics
     all_results = []
 
     for train_indices, test_indices in train_test_k_fold(n_folds, len(raw_data), rng):
