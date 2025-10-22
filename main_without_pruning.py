@@ -3,7 +3,7 @@ import json
 import matplotlib.pyplot as plt
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
-from evaluation import evaluate, averaging
+from evaluation_utils import evaluate, averaging
 from cross_validation_utils import train_test_k_fold
 
 

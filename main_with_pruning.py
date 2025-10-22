@@ -2,7 +2,7 @@ import numpy as np
 import json
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
-from evaluation import evaluate, averaging
+from evaluation_utils import evaluate, averaging
 import matplotlib.pyplot as plt
 from cross_validation_utils import train_val_test_k_fold
 
