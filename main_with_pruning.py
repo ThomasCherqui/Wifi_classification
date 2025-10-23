@@ -4,10 +4,10 @@ from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
 from evaluation_utils import evaluate, averaging
 import matplotlib.pyplot as plt
-from cross_validation_utils import train_val_test_k_fold
+from cross_validation_utils import train_test_k_fold
 
 
-def main(n_folds=10):
+def main(n_folds=10,n_inner_folds=9):
     print("Decision Tree Coursework: With Pruning")
 
     seed = 60013
@@ -22,38 +22,43 @@ def main(n_folds=10):
     raw_data = np.loadtxt(f"wifi_db/{dataset}_dataset.txt")
     outfile = f"visualisations/confusion_matrix_{dataset}.png"
 
-    # Initialise list to store evalution metrics
+    # Initialise list to store evaluation metrics
     all_results = []
 
-    for train_indices, val_indices, test_indices in train_val_test_k_fold(
-        n_folds, len(raw_data), rng
-    ):
-        # Set up the dataset for given fold
-        train_dataset = raw_data[train_indices, :]
-        validation_dataset = raw_data[val_indices, :]
+    #nested cross validation
+    for train_and_validation_indices, test_indices in train_test_k_fold(n_folds, len(raw_data), rng):
         test_dataset = raw_data[test_indices, :]
+        train_and_validation_dataset = raw_data[train_and_validation_indices,:]
+        
+        #to store the inner evaluation metrics
+        inner_results = []
+        
+        for train_indices, validation_indices in train_test_k_fold(n_inner_folds,len(train_and_validation_dataset),rng):
+            train_dataset = train_and_validation_dataset[train_indices,:]
+            validation_dataset = train_and_validation_dataset[validation_indices,:]
+            
+            dt = DecisionTree()
 
-        dt = DecisionTree()
+            # Train tree on the train dataset
+            dt.train(train_dataset)
 
-        # Train tree on the train dataset
-        dt.train(train_dataset)
-
-        # Use validation set to prune the tree
-        dt.pruning(validation_dataset[:, :-1], validation_dataset[:, -1])
-
-        # Evaluate the tree using the test data
-        results = evaluate(test_dataset, dt)
-        all_results.append(results)
-
+            # Use validation set to prune the tree
+            dt.pruning(validation_dataset[:, :-1], validation_dataset[:, -1])
+            
+            # Evaluate the tree using the test data
+            results = evaluate(test_dataset, dt)
+            
+            all_results.append(results)
+            
     # Ask user for visualization option
     visualise = (
-        input("Do you want to visualise the decision tree? (yes/no): ").strip().lower()
+        input("Do you want to visualise the last decision tree? (yes/no): ").strip().lower()
     )
     if visualise == "yes":
         dt.visualize_tree3(f"decision_tree_{dataset}_data.png")
 
     average_results = averaging(all_results, outfile)
-    print(average_results)
+    print("average results", average_results)
 
 
 main()

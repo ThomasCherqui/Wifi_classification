@@ -47,7 +47,6 @@ def main(n_folds=10):
         dt.visualize_tree3(f"decision_tree_{dataset}_data.png")
 
     average_results = averaging(all_results, outfile)
-    print(average_results)
-
+    print("average results", average_results)
 
 main()
