@@ -22,14 +22,10 @@ def main(n_folds=10):
     outfile = f"visualisations/confusion_matrix_{dataset}.png"
 
 
-
-    n_instances = len(raw_data)
-    shuffled_indices = rng.permutation(n_instances)
-    
     # Initialize list to store evaluation metrics
     all_results = []
 
-    for train_indices, test_indices in train_test_k_fold(n_folds, shuffled_indices):
+    for train_indices, test_indices in train_test_k_fold(n_folds, len(raw_data), rng):
         # Set up the dataset for given fold
         train_dataset = raw_data[train_indices, :]
         test_dataset = raw_data[test_indices, :]
