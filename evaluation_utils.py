@@ -151,7 +151,7 @@ def visualize_confusion_matrix(C, class_names, img_path):
     for j in range(len(class_names)):
         for i in range(len(class_names)):
             plt.annotate(
-                str(C[j, i]),
+                str(round(C[j, i],2)),
                 xy=(j, i),
                 ha="center",
                 va="center",
