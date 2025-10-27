@@ -452,4 +452,3 @@ class DecisionTree:
             self.left_branch = None
             self.right_branch = None
             self.label = y_majority
-            # breakpoint()

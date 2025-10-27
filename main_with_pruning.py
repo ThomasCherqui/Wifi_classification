@@ -1,5 +1,4 @@
 import numpy as np
-import json
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
 from evaluation_utils import evaluate, averaging
@@ -29,9 +28,7 @@ def main(n_folds=10,n_inner_folds=9):
     for train_and_validation_indices, test_indices in train_test_k_fold(n_folds, len(raw_data), rng):
         test_dataset = raw_data[test_indices, :]
         train_and_validation_dataset = raw_data[train_and_validation_indices,:]
-        
-        #to store the inner evaluation metrics
-        inner_results = []
+
         
         for train_indices, validation_indices in train_test_k_fold(n_inner_folds,len(train_and_validation_dataset),rng):
             train_dataset = train_and_validation_dataset[train_indices,:]
@@ -56,7 +53,7 @@ def main(n_folds=10,n_inner_folds=9):
     )
     if visualise == "yes":
         dt.visualize_tree3(f"decision_tree_{dataset}_data.png")
-
+        
     average_results = averaging(all_results, outfile)
     print("average results", average_results)
 

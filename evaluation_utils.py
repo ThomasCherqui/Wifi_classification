@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 
 def confusion_matrix(y_true, y_pred):
     """
@@ -163,8 +162,6 @@ def visualize_confusion_matrix(C, class_names, img_path):
     plt.yticks(np.arange(len(class_names)), [str(int(x)) for x in class_names])
     plt.title("Confusion Matrix")
     plt.imshow(C, cmap="Blues", interpolation="nearest")
-    # Ensure the directory exists
-    os.makedirs(os.path.dirname(img_path), exist_ok=True)
     plt.savefig(img_path)
 
 

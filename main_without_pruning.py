@@ -1,5 +1,4 @@
 import numpy as np
-import json
 import matplotlib.pyplot as plt
 from numpy.random import default_rng
 from Decision_Tree_Class import DecisionTree
@@ -22,10 +21,15 @@ def main(n_folds=10):
     raw_data = np.loadtxt(f"wifi_db/{dataset}_dataset.txt")
     outfile = f"visualisations/confusion_matrix_{dataset}.png"
 
+
+
+    n_instances = len(raw_data)
+    shuffled_indices = rng.permutation(n_instances)
+    
     # Initialize list to store evaluation metrics
     all_results = []
 
-    for train_indices, test_indices in train_test_k_fold(n_folds, len(raw_data), rng):
+    for train_indices, test_indices in train_test_k_fold(n_folds, shuffled_indices):
         # Set up the dataset for given fold
         train_dataset = raw_data[train_indices, :]
         test_dataset = raw_data[test_indices, :]
@@ -41,7 +45,7 @@ def main(n_folds=10):
 
     # Ask user for visualization option
     visualise = (
-        input("Do you want to visualise the decision tree? (yes/no): ").strip().lower()
+        input("Do you want to visualise the final fold decision tree? (yes/no): ").strip().lower()
     )
     if visualise == "yes":
         dt.visualize_tree3(f"decision_tree_{dataset}_data.png")

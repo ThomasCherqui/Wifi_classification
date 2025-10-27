@@ -26,25 +26,3 @@ def train_test_k_fold(n_folds, n_instances, random_generator):
         folds.append([train_indices, test_indices])
 
     return folds
-
-
-def train_val_test_k_fold(n_folds, n_instances, random_generator):
-    # Split the dataset into k splits
-    split_indices = k_fold_split(n_folds, n_instances, random_generator)
-
-    folds = []
-    for k in range(n_folds):
-        # Add a validation set for the pruning process
-        test_indices = split_indices[k]
-        val_indices = split_indices[(k + 1) % n_folds]
-        train_indices = np.concatenate(
-            [
-                split_indices[i]
-                for i in range(n_folds)
-                if (i != k and i != (k + 1) % n_folds)
-            ]
-        )
-
-        folds.append([train_indices, val_indices, test_indices])
-
-    return folds
