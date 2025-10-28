@@ -22,6 +22,7 @@ def main(n_folds=10,n_inner_folds=9):
 
     # Initialise list to store evaluation metrics
     all_results = []
+    avg_depth = []
 
     #nested cross validation
     for train_and_validation_indices, test_indices in train_test_k_fold(n_folds, len(raw_data), rng):
@@ -45,6 +46,9 @@ def main(n_folds=10,n_inner_folds=9):
             results = evaluate(test_dataset, dt)
             
             all_results.append(results)
+
+            avg_depth.append(dt.get_tree_depth())
+
             
     # Ask user for visualization option
     visualise = (
@@ -56,5 +60,6 @@ def main(n_folds=10,n_inner_folds=9):
     average_results = averaging(all_results, f"confusion_matrix_with_pruning_{dataset}_data.png")
     print("average results", average_results)
 
-
+    print("Depth of Tree:", np.mean(avg_depth))
+    
 main()

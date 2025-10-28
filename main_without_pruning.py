@@ -23,6 +23,7 @@ def main(n_folds=10):
 
     # Initialize list to store evaluation metrics
     all_results = []
+    avg_depth = []
 
     for train_indices, test_indices in train_test_k_fold(n_folds, len(raw_data), rng):
         # Set up the dataset for given fold
@@ -38,6 +39,9 @@ def main(n_folds=10):
         results = evaluate(test_dataset, dt)
         all_results.append(results)
 
+        avg_depth.append(dt.get_tree_depth())
+
+
     # Ask user for visualization option
     visualise = (
         input("Do you want to visualise the final fold decision tree? (yes/no): ").strip().lower()
@@ -47,5 +51,7 @@ def main(n_folds=10):
 
     average_results = averaging(all_results, f"confusion_matrix_without_pruning_{dataset}_data.png")
     print("average results", average_results)
+
+    print("Depth of Tree:", np.mean(avg_depth))
 
 main()

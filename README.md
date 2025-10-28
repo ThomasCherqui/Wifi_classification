@@ -11,7 +11,7 @@
 
 
 ## Choose the dataset
-The user chooses the dataset ('clean' or 'noisy') as an input when the main is executed. If you want to select an alternate dataset, change the path on line 21 of main.py.
+The user chooses the dataset ('clean' or 'noisy') as an input when the main is executed. If you want to select an alternate dataset, change the path on line 21 of either main.py (with or without pruning)
 
 ## Run with or without pruning
 Run *python main_without_pruning.py* or *python main_with_pruning.py*
@@ -27,7 +27,7 @@ Precision
 
 F1 Score
 
-The average confusion matrix will be saved in the visualisations/ folder.
+The average confusion matrix will be saved.
 
 ## Bonus : visualisation
 To generate and save a figure of the trained Decision Tree (without pruning), run: *python main_without_pruning.py*

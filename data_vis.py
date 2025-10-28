@@ -18,4 +18,9 @@ apparition = {}
 for label in track:
     apparition[label] = apparition.get(label, 0) + 1
 
-print("Erreurs par classe :", apparition)
+print("Errors per class :", apparition)
+
+
+print("Number per class noisy: ", np.bincount(noisy.astype(int)[:, -1]))
+print("Number per class clean: ", np.bincount(clean.astype(int)[:, -1]))
+

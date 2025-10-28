@@ -20,7 +20,7 @@ class DecisionTree:
         entropy = 0
         for i in range(len(classes)):
             p = counts[i] / len_dataset
-            entropy -= p * np.log2(p)  # ← signe négatif + log base 2
+            entropy -= p * np.log2(p) 
 
         return entropy
 
@@ -197,6 +197,19 @@ class DecisionTree:
             "left": self.left_branch.to_dict() if self.left_branch else None,
             "right": self.right_branch.to_dict() if self.right_branch else None,
         }
+    
+    def get_tree_depth(self):
+        if self.label is not None:
+            return 1
+        if self.left_branch is not None:
+            left_depth = self.left_branch.get_tree_depth()
+        if self.right_branch is not None:
+            right_depth = self.right_branch.get_tree_depth()
+ 
+        max_depth = max(left_depth, right_depth)
+        
+        return 1 + max_depth
+
 
     def visualize_tree(self, save_path="decision_tree_simple.png"):
         import matplotlib.pyplot as plt
